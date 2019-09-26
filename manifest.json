@@ -1,0 +1,10 @@
+{
+    "Name": "autotool",
+    "Author": "michaelgatesdev",
+    "Version": "1.0.0",
+    "Description": "Automatically switches tools to the best one to use",
+    "UniqueID": "michaelgatesdev.autotool",
+    "EntryDll": "autotool.dll",
+    "MinimumApiVersion": "2.10.0",
+    "UpdateKeys": []
+}
