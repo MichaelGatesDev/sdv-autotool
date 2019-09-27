@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 
@@ -59,7 +60,7 @@ namespace autotool
             {
                 this.IsActive = !this.IsActive;
                 var state = IsActive ? "enabled" : "disabled";
-                Monitor.Log($"Autotool mod is now {state}");
+                Game1.chatBox.addMessage($"Autotool is now {state}", IsActive ? Color.LimeGreen : Color.Red);
             }
 
             // if mod off
@@ -83,10 +84,8 @@ namespace autotool
             var loc = player.currentLocation;
             if (loc == null) return;
 
-            // monsters take priority
-            if (IsMonsterInProximity())
+            if (IsMonsterInProximity(2.5f, out var distance))
             {
-                Monitor.Log($"There's a monster nearby", LogLevel.Info);
                 this.SwitchTo(ToolType.MeleeWeapon);
                 return;
             }
@@ -171,10 +170,49 @@ namespace autotool
             }
         }
 
-        private bool IsMonsterInProximity()
+        private bool IsMonsterInProximity(float maxDistance, out float distanceFromPlayer)
         {
+            distanceFromPlayer = -1;
             var player = Game1.player;
+            var playerLoc = player.getTileLocation();
+            foreach (var npc in player.currentLocation.characters)
+            {
+                if (!npc.IsMonster) continue;
+                var monster = (Monster)npc;
+                var monsterLoc = npc.getTileLocation();
+
+                var distance = Vector2.Distance(playerLoc, monsterLoc);
+                if (distance <= maxDistance)
+                {
+                    distanceFromPlayer = distance;
+                    return true;
+                }
+            }
             return false;
+        }
+
+        public Monster GetNearestMonster(out float distance)
+        {
+            Monster nearestMonster = null;
+            float minDistance = -1f;
+
+            var player = Game1.player;
+            var playerLoc = player.getTileLocation();
+            foreach (var npc in player.currentLocation.characters)
+            {
+                if (!npc.IsMonster) continue;
+                var monster = (Monster)npc;
+                var monsterLoc = npc.getTileLocation();
+
+                var distancePlayerToMonster = Vector2.Distance(playerLoc, monsterLoc);
+                if ((minDistance == -1f) || distancePlayerToMonster < minDistance)
+                {
+                    minDistance = distancePlayerToMonster;
+                    nearestMonster = monster;
+                }
+            }
+            distance = minDistance;
+            return nearestMonster;
         }
 
         private bool SwitchTo(ToolType type)
