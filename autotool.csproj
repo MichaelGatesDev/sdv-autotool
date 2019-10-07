@@ -27,9 +27,13 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SDVCommon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\SDVCommon\SDVCommon\bin\Debug\SDVCommon.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModConfig.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
